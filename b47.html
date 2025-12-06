@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Stoneware Vase — Moon Pottery</title>
+
+  <!-- Google Fonts: Great Vibes -->
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Main Stylesheet -->
+  <link href="scripts/css/main.css" rel="stylesheet">
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <img src="images/logo.jpg" alt="Moon Pottery Logo" class="header-logo">
+    Moon Pottery
+  </div>
+  <nav>
+    <a href="index.html" class="nav-home">HOME</a>
+    <a href="shop.html" class="nav-shop">SHOP</a>
+    <a href="about.html" class="nav-about">ABOUT</a>
+    <a href="contact.html" class="nav-contact">CONTACT</a>
+    <button class="lang-btn" id="toggle-lang">日本語</button>
+    <button class="btn btn-dark" id="cart-btn" style="margin-left: 1rem;">
+      Cart (<span id="cart-count">0</span>)
+    </button>
+  </nav>
+
+  <style>
+    .item-gallery img {
+      height: 600px;
+      width: auto;
+    }
+    .product img {
+      height: 600px;
+      width: auto;
+    }
+  </style>
+</header>
+
+<section class="section">
+  <div class="item-gallery">
+    <img src="images/b47.jpeg" alt="Stoneware Vase 1" onclick="openImage('images/b47.jpeg')">
+  </div>
+
+  <div class="item-details">
+    <h2>Speckled Buff Coffee Pour Over Blue</h2>
+    <p><strong>Price:</strong> $55</p>
+    <p><strong>Size:</strong> 10" height × 5" width</p>
+    <p><strong>Material:</strong> Speckled Buff</p>
+    <p><strong>Technique:</strong> Glaze</p>
+
+    <!-- FIXED DESCRIPTION (now inside a single p tag) -->
+    <p class="description">
+      <strong>Description:</strong>
+      Handcrafted stoneware Coffee Pour Over. Perfect for brewing a special fresh coffee. Each piece is hand made in a small studio.
+    </p>
+
+    <!-- Add to Cart Button -->
+    <button class="btn btn-dark" id="add-to-cart-btn" style="margin-top: 1rem;">
+      Add to Cart
+    </button>
+  </div>
+</section>
+
+<footer>
+  &copy; 2025 MOON POTTERY — ALL RIGHTS RESERVED.
+  <div class="footer-links" style="margin-top: 1rem;">
+    <a href="about.html">ABOUT</a> |
+    <a href="faqs.html">FAQs</a> |
+    <a href="contact.html">CONTACT</a> |
+    <a href="press.html">PRESS ROOM</a>
+  </div>
+  <div class="footer-logo">
+    <img src="images/logo.jpg" alt="Moon Pottery Logo">
+  </div>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  // --- Cart Item Data for this page ---
+  const currentItem = {
+    id: "stoneware-jar-1",
+    name: "Speckled Buff Coffee Pour Over Blue",
+    price: 55,
+    image: "images/b47.jpeg"
+  };
+
+  // --- Load cart from localStorage safely ---
+  let cart = [];
+  try {
+    const stored = JSON.parse(localStorage.getItem('cart'));
+    if (Array.isArray(stored)) {
+      cart = stored.map(item => ({
+        id: item.id,
+        name: item.name,
+        price: Number(item.price) || 0,
+        image: item.image || "",
+        qty: Number(item.qty) || 0
+      }));
+    }
+  } catch(e) {
+    cart = [];
+  }
+
+  const cartCountEl = document.getElementById("cart-count");
+  const cartBtn = document.getElementById("cart-btn");
+  const addToCartBtn = document.getElementById("add-to-cart-btn");
+
+  function updateCartCount() {
+    const totalQty = cart.reduce((sum, item) => sum + (Number(item.qty) || 0), 0);
+    cartCountEl.textContent = totalQty;
+  }
+
+  updateCartCount();
+
+  // Add to cart
+  addToCartBtn.addEventListener("click", () => {
+    const index = cart.findIndex(item => item.id === currentItem.id);
+    if (index >= 0) {
+      cart[index].qty = (Number(cart[index].qty) || 0) + 1;
+    } else {
+      cart.push({...currentItem, qty: 1});
+    }
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartCount();
+    alert("Item added to cart!");
+  });
+
+  // Cart button redirects to cart page
+  cartBtn.addEventListener("click", () => {
+    window.location.href = "cart.html";
+  });
+
+  // Popup Image Function
+  function openImage(url) {
+    const popup = window.open("", "_blank", "width=900,height=700,resizable=yes,scrollbars=yes");
+    popup.document.write(`
+      <html><body style="margin:0;background:#000;display:flex;justify-content:center;align-items:center;height:100vh">
+        <img src="${url}" style="max-width:95%;max-height:95%;cursor:pointer;border-radius:8px;box-shadow:0 0 25px rgba(255,255,255,0.3);" onclick="window.close()">
+      </body></html>
+    `);
+  }
+
+  // Language toggle
+  const langBtn = document.getElementById("toggle-lang");
+  let isEnglish = true;
+
+  langBtn.addEventListener("click", () => {
+    isEnglish = !isEnglish;
+
+    document.querySelector(".nav-home").textContent = isEnglish ? "HOME" : "ホーム";
+    document.querySelector(".nav-shop").textContent = isEnglish ? "SHOP" : "ショップ";
+    document.querySelector(".nav-about").textContent = isEnglish ? "ABOUT" : "アバウト";
+    document.querySelector(".nav-contact").textContent = isEnglish ? "CONTACT" : "コンタクト";
+
+    const details = document.querySelector(".item-details");
+    const descriptionP = details.querySelector(".description");
+
+    if (isEnglish) {
+      details.querySelector("h2").textContent = "Speckled Buff Coffee Pour Over Blue";
+
+      details.querySelectorAll("p")[0].innerHTML = "<strong>Price:</strong> $55";
+      details.querySelectorAll("p")[1].innerHTML = "<strong>Size:</strong> 10\" height × 5\" width";
+      details.querySelectorAll("p")[2].innerHTML = "<strong>Material:</strong> Speckled Buff";
+      details.querySelectorAll("p")[3].innerHTML = "<strong>Technique:</strong> Glaze";
+
+      descriptionP.innerHTML =
+        "<strong>Description:</strong> Handcrafted stoneware Coffee Pour Over. Perfect for brewing a special fresh coffee. Each piece is hand made in a small studio.";
+
+    } else {
+      details.querySelector("h2").textContent = "コーヒードリッパー青";
+
+      details.querySelectorAll("p")[0].innerHTML = "<strong>価格:</strong> ¥8,500";
+      details.querySelectorAll("p")[1].innerHTML = "<strong>サイズ:</strong> 高さ30cm × 幅20cm";
+      details.querySelectorAll("p")[2].innerHTML = "<strong>素材:</strong> スペックルドバフ";
+      details.querySelectorAll("p")[3].innerHTML = "<strong>技法:</strong> 釉薬";
+
+      descriptionP.innerHTML =
+        "<strong>説明:</strong> 手作りのコーヒードリッパー。滑らかなマット仕上げで、朝のコーヒーにぴったり。小さな工房で一点ずつ制作しています。";
+    }
+
+    langBtn.textContent = isEnglish ? "日本語" : "English";
+  });
+</script>
+
+</body>
+</html>
